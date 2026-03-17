@@ -8,8 +8,8 @@ import { type NrfConnectState } from '@nordicsemiconductor/pc-nrfconnect-shared'
 import { combineReducers } from 'redux';
 
 import historyFileReducer from './features/history/historySlice';
-import terminalReducer from './features/terminal/terminalSlice';
 import templateReducer from './features/templates/templateSlice';
+import terminalReducer from './features/terminal/terminalSlice';
 
 type AppState = ReturnType<typeof appReducer>;
 

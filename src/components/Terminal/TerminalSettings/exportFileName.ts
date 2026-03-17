@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+
 const formatDate = (date: Date) =>
-    `${date.getDate().toString().padStart(2, '0')}${(
-        date.getMonth() + 1
-    )
+    `${date.getDate().toString().padStart(2, '0')}${(date.getMonth() + 1)
         .toString()
         .padStart(2, '0')}${date.getFullYear()}_${date
         .getHours()

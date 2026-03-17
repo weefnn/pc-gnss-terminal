@@ -1,6 +1,34 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
 import { useDispatch, useSelector } from 'react-redux';
+import { fireEvent, render, screen } from '@testing-library/react';
+
+import Main from './Main';
+
+type MockState = {
+    app: {
+        terminal: {
+            clearOnSend: boolean;
+            lineEnding: string;
+            lineMode: boolean;
+            serialOptions: unknown;
+            serialPort: unknown;
+        };
+        templates: {
+            templates: Array<{
+                id: string;
+                label: string;
+                payload: string;
+            }>;
+            selectedTemplateId?: string;
+        };
+    };
+};
 
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
@@ -8,11 +36,11 @@ jest.mock('react-redux', () => ({
 }));
 
 jest.mock('../../features/terminal/terminalSlice', () => ({
-    getClearOnSend: (state: any) => state.app.terminal.clearOnSend,
-    getLineEnding: (state: any) => state.app.terminal.lineEnding,
-    getLineMode: (state: any) => state.app.terminal.lineMode,
-    getSerialOptions: (state: any) => state.app.terminal.serialOptions,
-    getSerialPort: (state: any) => state.app.terminal.serialPort,
+    getClearOnSend: (state: MockState) => state.app.terminal.clearOnSend,
+    getLineEnding: (state: MockState) => state.app.terminal.lineEnding,
+    getLineMode: (state: MockState) => state.app.terminal.lineMode,
+    getSerialOptions: (state: MockState) => state.app.terminal.serialOptions,
+    getSerialPort: (state: MockState) => state.app.terminal.serialPort,
     setSerialOptions: (payload: unknown) => ({
         type: 'terminal/setSerialOptions',
         payload,
@@ -28,8 +56,9 @@ jest.mock('../../features/terminal/terminalSlice', () => ({
 }));
 
 jest.mock('../../features/templates/templateSlice', () => ({
-    getTemplates: (state: any) => state.app.templates.templates,
-    getSelectedTemplateId: (state: any) => state.app.templates.selectedTemplateId,
+    getTemplates: (state: MockState) => state.app.templates.templates,
+    getSelectedTemplateId: (state: MockState) =>
+        state.app.templates.selectedTemplateId,
     setSelectedTemplateId: (payload: string) => ({
         type: 'templates/setSelectedTemplateId',
         payload,
@@ -37,8 +66,6 @@ jest.mock('../../features/templates/templateSlice', () => ({
 }));
 
 jest.mock('./Terminal', () => () => <div>Terminal Mock</div>);
-
-import Main from './Main';
 
 describe('Main', () => {
     const dispatch = jest.fn();
@@ -94,7 +121,9 @@ describe('Main', () => {
     it('renders template buttons from state', () => {
         render(<Main active />);
 
-        expect(screen.getByRole('button', { name: 'Poll Version' })).toBeVisible();
+        expect(
+            screen.getByRole('button', { name: 'Poll Version' }),
+        ).toBeVisible();
     });
 
     it('sends template payload through serial write path', () => {

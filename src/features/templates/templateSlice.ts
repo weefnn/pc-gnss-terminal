@@ -1,10 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import type { RootState } from '../../appReducer';
-import {
-    defaultTemplates,
-    type CommandTemplate,
-} from './defaultTemplates';
+import { type CommandTemplate, defaultTemplates } from './defaultTemplates';
 
 interface TemplateState {
     templates: CommandTemplate[];
