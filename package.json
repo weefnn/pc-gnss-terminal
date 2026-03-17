@@ -1,8 +1,9 @@
 {
-    "name": "pc-nrfconnect-serial-terminal",
+    "name": "pc-gnssconnect-terminal",
     "version": "1.6.2",
-    "description": "Terminal emulator for serial port connections",
-    "displayName": "Serial Terminal",
+    "description": "Serial terminal for GNSS device communication",
+    "displayName": "GNSS Terminal",
+    "homepage": "https://github.com/your-org/pc-gnssconnect-terminal",
     "repository": {
         "type": "git",
         "url": "https://github.com/NordicSemiconductor/pc-nrfconnect-serial-terminal.git"
@@ -36,6 +37,7 @@
         "build:prod": "run-esbuild --prod",
         "test": "jest --passWithNoTests",
         "check": "run-p --silent --continue-on-error --print-label check:*",
+        "check:app": "check-app-properties",
         "check:lint": "eslint --color .",
         "check:types": "check-for-typescript tsc --noEmit --pretty",
         "check:license": "nrfconnect-license check",
