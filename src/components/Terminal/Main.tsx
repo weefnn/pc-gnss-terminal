@@ -18,6 +18,7 @@ import {
     setSerialPort,
     updateSerialOptions,
 } from '../../features/terminal/terminalSlice';
+import CommandTemplates from './CommandTemplates';
 import Terminal from './Terminal';
 
 export default ({ active }: PaneProps) => {
@@ -96,14 +97,24 @@ export default ({ active }: PaneProps) => {
         [serialPort, lineEnding, lineMode],
     );
 
+    const onSendTemplate = useCallback(
+        (payload: string) => {
+            commandCallback(payload);
+        },
+        [commandCallback],
+    );
+
     return (
-        <Terminal
-            commandCallback={commandCallback}
-            onData={onData}
-            onDataWritten={onDataWritten}
-            clearOnSend={clearOnSend}
-            lineMode={lineMode}
-            active={active}
-        />
+        <>
+            <CommandTemplates onSendTemplate={onSendTemplate} />
+            <Terminal
+                commandCallback={commandCallback}
+                onData={onData}
+                onDataWritten={onDataWritten}
+                clearOnSend={clearOnSend}
+                lineMode={lineMode}
+                active={active}
+            />
+        </>
     );
 };
