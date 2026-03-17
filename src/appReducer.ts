@@ -9,6 +9,7 @@ import { combineReducers } from 'redux';
 
 import historyFileReducer from './features/history/historySlice';
 import terminalReducer from './features/terminal/terminalSlice';
+import templateReducer from './features/templates/templateSlice';
 
 type AppState = ReturnType<typeof appReducer>;
 
@@ -17,6 +18,7 @@ export type RootState = NrfConnectState<AppState>;
 const appReducer = combineReducers({
     terminal: terminalReducer,
     historyFile: historyFileReducer,
+    templates: templateReducer,
 });
 
 export default appReducer;
