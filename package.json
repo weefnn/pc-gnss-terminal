@@ -1,6 +1,6 @@
 {
     "name": "pc-gnss-terminal",
-    "version": "1.6.2",
+    "version": "1.6.3",
     "description": "Serial terminal for GNSS device communication",
     "displayName": "GNSS Terminal",
     "homepage": "https://github.com/weefnn/pc-gnss-terminal",
