@@ -15,6 +15,15 @@ interface StoreSchema {
     pathToHistoryFile: string;
     maxNumberOfLinesInHistoryFile: number;
     scrollback: number;
+    terminalPreferencesByPortPath: Record<
+        string,
+        {
+            lineMode: boolean;
+            echoOnShell: boolean;
+            lineEnding: string;
+            clearOnSend: boolean;
+        }
+    >;
 }
 
 const store = getPersistentStore<StoreSchema>({
@@ -57,3 +66,32 @@ export const setMaxNumberOfLinesInHistoryFile = (size: number) => {
 };
 
 export const [getScrollback, setScrollback] = fromStore('scrollback', 1000);
+
+export type TerminalPreferences = {
+    lineMode: boolean;
+    echoOnShell: boolean;
+    lineEnding: string;
+    clearOnSend: boolean;
+};
+
+export const getTerminalPreferencesForPath = (
+    path: string,
+): TerminalPreferences | undefined => {
+    if (path === '') return undefined;
+
+    const byPath = store.get('terminalPreferencesByPortPath', {});
+    return byPath[path];
+};
+
+export const setTerminalPreferencesForPath = (
+    path: string,
+    preferences: TerminalPreferences,
+) => {
+    if (path === '') return;
+
+    const byPath = store.get('terminalPreferencesByPortPath', {});
+    store.set('terminalPreferencesByPortPath', {
+        ...byPath,
+        [path]: preferences,
+    });
+};

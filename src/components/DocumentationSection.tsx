@@ -10,11 +10,10 @@ import { DocumentationSection } from '@nordicsemiconductor/pc-nrfconnect-shared'
 const DocumentationSections = [
     <DocumentationSection
         key="infocenter"
-        linkLabel="Go to TechDocs"
-        link="https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html"
+        linkLabel="Project Home"
+        link="https://github.com/weefnn/pc-gnss-terminal"
     >
-        Visit our Technical Documentation for more documentation about using the
-        app.
+        Visit the project homepage for usage documentation and release notes.
     </DocumentationSection>,
 ];
 

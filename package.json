@@ -1,6 +1,6 @@
 {
     "name": "pc-gnss-terminal",
-    "version": "1.6.3",
+    "version": "1.6.4",
     "description": "Serial terminal for GNSS device communication",
     "displayName": "GNSS Terminal",
     "homepage": "https://github.com/weefnn/pc-gnss-terminal",
@@ -14,11 +14,6 @@
         "nrfconnect": ">=5.2.0"
     },
     "nrfConnectForDesktop": {
-        "nrfutil": {
-            "device": [
-                "2.17.5"
-            ]
-        },
         "html": "dist/index.html",
         "nrfutilCore": "8.1.1"
     },
@@ -41,7 +36,6 @@
         "check:lint": "eslint --color .",
         "check:types": "check-for-typescript tsc --noEmit --pretty",
         "check:license": "nrfconnect-license check",
-        "nordic-publish": "node ./dist/nordic-publish.js",
         "release:pack": "npm run build:prod && npm pack --silent",
         "release:manifest": "node ./scripts/generate-release-assets.mjs",
         "release:bundle": "npm run release:pack && npm run release:manifest",

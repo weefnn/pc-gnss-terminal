@@ -8,16 +8,15 @@ import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Dropdown,
-    getPersistedTerminalSettings,
     Group,
-    persistTerminalSettings,
-    selectedDevice,
     StateSelector,
-    telemetry,
     Toggle,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
-import { selectedSerialNumber } from '@nordicsemiconductor/pc-nrfconnect-shared/src/Device/deviceSlice';
 
+import {
+    getTerminalPreferencesForPath,
+    setTerminalPreferencesForPath,
+} from '../../../app/store';
 import {
     getClearOnSend,
     getEchoOnShell,
@@ -35,11 +34,9 @@ import { convertToDropDownItems } from '../../../utils/dataConstructors';
 import ExportLog from './ExportLog';
 
 export default () => {
-    const device = useSelector(selectedDevice);
     const serialPort = useSelector(getSerialPort);
     const lastModemOpenState = useRef(false);
     const selectedSerialport = useSelector(getSerialOptions).path;
-    const currentSerialNumber = useSelector(selectedSerialNumber);
 
     const clearOnSend = useSelector(getClearOnSend);
     const lineEnding = useSelector(getLineEnding);
@@ -60,27 +57,6 @@ export default () => {
 
     const lineModeItems = ['Line', 'Shell'];
 
-    const prevLineEndingRef = useRef<LineEnding | undefined>(undefined);
-    const prevSerialNumberRef = useRef<string | null | undefined>(undefined);
-
-    useEffect(() => {
-        if (!lineMode || !device) return;
-
-        const timerId = setTimeout(() => {
-            if (
-                prevLineEndingRef.current !== lineEnding ||
-                prevSerialNumberRef.current !== currentSerialNumber
-            ) {
-                telemetry.sendEvent('Line Ending', { lineEnding });
-
-                prevLineEndingRef.current = lineEnding;
-                prevSerialNumberRef.current = currentSerialNumber;
-            }
-        }, 500);
-
-        return () => clearTimeout(timerId);
-    }, [lineEnding, lineMode, device, currentSerialNumber]);
-
     useEffect(() => {
         if (!serialPort) {
             lastModemOpenState.current = false;
@@ -90,19 +66,12 @@ export default () => {
     useEffect(() => {
         if (serialPort) {
             serialPort.isOpen().then(open => {
-                if (lastModemOpenState.current !== open && device) {
-                    const vComIndex = device.serialPorts?.findIndex(
-                        dev => dev.comName === selectedSerialport,
-                    );
-
-                    if (vComIndex === undefined || vComIndex === -1) {
-                        return;
-                    }
-
-                    const terminalSettings = getPersistedTerminalSettings(
-                        device,
-                        vComIndex,
-                    );
+                if (
+                    lastModemOpenState.current !== open &&
+                    selectedSerialport !== ''
+                ) {
+                    const terminalSettings =
+                        getTerminalPreferencesForPath(selectedSerialport);
 
                     if (terminalSettings) {
                         dispatch(setLineMode(terminalSettings.lineMode));
@@ -121,25 +90,16 @@ export default () => {
         } else {
             lastModemOpenState.current = false;
         }
-    }, [device, dispatch, serialPort, selectedSerialport]);
+    }, [dispatch, serialPort, selectedSerialport]);
 
     useEffect(() => {
-        if (!device) {
+        if (selectedSerialport === '') {
             return;
         }
 
         serialPort?.isOpen().then(open => {
             if (!open) return;
-
-            const vComIndex = device.serialPorts?.findIndex(
-                dev => dev.comName === selectedSerialport,
-            );
-
-            if (vComIndex === undefined || vComIndex === -1) {
-                return;
-            }
-
-            persistTerminalSettings(device, vComIndex, {
+            setTerminalPreferencesForPath(selectedSerialport, {
                 lineMode,
                 echoOnShell,
                 lineEnding,
@@ -148,7 +108,6 @@ export default () => {
         });
     }, [
         clearOnSend,
-        device,
         echoOnShell,
         lineEnding,
         lineMode,
