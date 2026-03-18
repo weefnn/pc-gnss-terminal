@@ -1,0 +1,49 @@
+name: Release To GitHub
+
+on:
+    push:
+        tags:
+            - 'v*'
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build app bundle
+              run: npm run build:prod
+
+            - name: Pack npm tarball
+              id: pack
+              run: echo "tarball=$(npm pack --silent | tail -n 1)" >> "$GITHUB_OUTPUT"
+
+            - name: Generate source manifests
+              run: >
+                  node scripts/generate-release-assets.mjs
+                  --owner weefnn
+                  --repo pc-gnss-terminal
+                  --tag "${{ github.ref_name }}"
+                  --tarball "${{ steps.pack.outputs.tarball }}"
+
+            - name: Publish release assets
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: |
+                      ${{ steps.pack.outputs.tarball }}
+                      release/source.json
+                      release/pc-gnss-terminal.json

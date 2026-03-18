@@ -1,6 +1,5 @@
 # GNSS Terminal app
 
-[![Build Status](https://dev.azure.com/NordicSemiconductor/Wayland/_apis/build/status/pc-nrfconnect-serial-terminal?branchName=main)](https://dev.azure.com/NordicSemiconductor/Wayland/_build/latest?definitionId=126&branchName=main)
 [![License](https://img.shields.io/badge/license-Modified%20BSD%20License-blue.svg)](LICENSE)
 
 The GNSS Terminal app allows you to connect to serial devices.
@@ -9,16 +8,21 @@ The GNSS Terminal app allows you to connect to serial devices.
 
 ## Installation
 
-The GNSS Terminal app is installed from nRF Connect from Desktop. For detailed
-steps, see
-[Installing nRF Connect for Desktop apps](https://docs.nordicsemi.com/bundle/swtools_docs/page/app/nrf-connect-desktop/installing_apps.html)
-in the nRF Connect from Desktop documentation.
+Install this app from `GNSS Launcher`.
+
+Recommended source URL in launcher:
+
+```text
+https://github.com/weefnn/pc-gnss-terminal/releases/latest/download/source.json
+```
+
+After adding this source in launcher settings, `GNSS Terminal` appears in the
+app list and can be installed with one click.
 
 ## Documentation
 
 Read the
-[Serial Terminal app](https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-serial-terminal/index.html)
-official documentation.
+[GNSS local app runbook](https://github.com/weefnn/pc-gnss-launcher/blob/main/docs/superpowers/runbooks/gnss-local-app.md).
 
 ## Development
 
@@ -26,6 +30,20 @@ See the
 [app development](https://nordicsemiconductor.github.io/pc-nrfconnect-docs/)
 pages for details on how to develop apps for the nRF Connect for Desktop
 framework.
+
+## Release
+
+GitHub tag releases (`v*`) publish these assets automatically:
+
+- `pc-gnss-terminal-<version>.tgz`
+- `release/source.json`
+- `release/pc-gnss-terminal.json`
+
+Local dry-run:
+
+```bash
+npm run release:bundle
+```
 
 ## Feedback
 

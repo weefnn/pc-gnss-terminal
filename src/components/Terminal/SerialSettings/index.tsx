@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Button,
@@ -20,12 +20,14 @@ import {
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import { type SerialPortOpenOptions } from 'serialport';
+import { SerialPort as NodeSerialPort } from 'serialport';
 
 import {
     getAvailableSerialPorts,
     getSerialOptions,
     getSerialPort,
     getShowOverwriteDialog,
+    setAvailableSerialPorts,
     setSerialOptions,
     setSerialPort,
     setShowOverwriteDialog,
@@ -36,6 +38,7 @@ import {
     getSelectedDropdownItem,
 } from '../../../utils/dataConstructors';
 import Baudrate from './Baudrate';
+import { selectSerialPath, toPortPaths } from './serialPortRefresh';
 
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
@@ -57,6 +60,31 @@ const SerialSettings = () => {
         serialPort !== undefined || availablePorts.length === 0;
 
     const dispatch = useDispatch();
+
+    const refreshSerialPorts = useCallback(async () => {
+        try {
+            const serialPortInfos = await NodeSerialPort.list();
+            const availablePaths = toPortPaths(serialPortInfos);
+
+            dispatch(setAvailableSerialPorts(availablePaths));
+
+            const nextPath = selectSerialPath(
+                availablePaths,
+                serialOptions.path,
+            );
+            if (nextPath !== serialOptions.path) {
+                dispatch(updateSerialOptions({ path: nextPath }));
+            }
+
+            if (serialPort != null && nextPath === '') {
+                dispatch(setSerialPort(undefined));
+            }
+        } catch (error) {
+            logger.error(
+                `Unable to list serial ports: ${(error as Error).message}`,
+            );
+        }
+    }, [dispatch, serialOptions.path, serialPort]);
 
     const comPortsDropdownItems = useMemo(
         () =>
@@ -148,6 +176,13 @@ const SerialSettings = () => {
             dispatch(persistSerialPortOptions(serialOptions));
         }
     }, [dispatch, serialOptions, serialPort]);
+
+    useEffect(() => {
+        refreshSerialPorts();
+
+        const intervalId = window.setInterval(refreshSerialPorts, 2000);
+        return () => window.clearInterval(intervalId);
+    }, [refreshSerialPorts]);
 
     return (
         <>
