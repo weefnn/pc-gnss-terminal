@@ -5,10 +5,7 @@
  */
 
 import React from 'react';
-import {
-    App,
-    render,
-} from '@nordicsemiconductor/pc-nrfconnect-shared';
+import { App, render } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import appReducer from './appReducer';
 import DocumentationSections from './components/DocumentationSection';
